@@ -9,7 +9,7 @@
         .container { width: 100%; max-width: 500px; margin: 0 auto; box-sizing: border-box; }
         .panel, .card { background: rgba(255, 255, 255, 0.05); border: 2px solid #4FC3F7; border-radius: 20px; padding: 15px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); backdrop-filter: blur(5px); }
         .card { background: #FFFFFF; border-color: #E0E0E0; text-align: justify; }
-        .app-title { font-size: 22px; font-weight: 900; text-transform: uppercase; margin: 0 0 5px 0; color: #FFF; }
+        .app-title { font-size: 22px; font-weight: 900; text-transform: uppercase; margin: 0; color: #FFF; }
         .card-title { font-size: 14px; font-weight: 800; color: #B71C1C; text-transform: uppercase; margin-bottom: 6px; text-align: center; }
         .card-text { font-size: 14px; color: #212121; margin: 0; white-space: pre-line; font-weight: 500; }
         .viewport { height: 220px; position: relative; margin-bottom: 12px; border-radius: 24px; overflow: hidden; background: #020617; border: 3px solid #FFD54F; display: flex; flex-direction: column; justify-content: space-between; padding: 12px; box-sizing: border-box; }
@@ -31,7 +31,7 @@
     <div class="container">
         <div class="panel">
             <h1 class="app-title">Divine Mercy</h1>
-            <div style="display:flex; justify-content:space-around; font-family:sans-serif; font-weight:800; font-size:13px; color:#4FC3F7;">
+            <div style="display:flex; justify-content:space-around; font-family:sans-serif; font-weight:800; font-size:13px; color:#4FC3F7; margin-top:5px;">
                 <div id="b-lbl">Bead Tracker: 1 / 56</div>
                 <div id="s-lbl">Opening Prayers</div>
             </div>
@@ -53,20 +53,22 @@
         var step = 0; const MAX = 56;
         var fText = "Eternal Father, I offer Thee the Body and Blood, Soul and Divinity of Thy Dearly Beloved Son, Our Lord, Jesus Christ, in atonement for our sins and those of the whole world.";
         var pText = "For the sake of His sorrowful Passion, have mercy on us and on the whole world.";
+        var creedText = "I believe in God, the Father Almighty, Creator of heaven and earth, and in Jesus Christ, His only Son, our Lord, who was conceived by the Holy Spirit, born of the Virgin Mary, suffered under Pontius Pilate, was crucified, died and was buried; He descended into hell; on the third day He rose again from the dead; He ascended into heaven, and is seated at the right hand of God the Father Almighty; from there He will come to judge the living and the dead.\n\nI believe in the Holy Spirit, the holy catholic Church, the communion of saints, the forgiveness of sins, the resurrection of the body, and life everlasting. Amen.";
+
         function getData(s) {
-            if (s === 0) return { b: "🔴", s: "Opening Prayers", t: "The Sign of the Cross", p: "In the name of the Father, and of the Son, and of the Holy Spirit. Amen.", lg: true, rIdx: -1 };
-            if (s === 1) return { b: "⚪", s: "Opening Prayers", t: "The Our Father", p: "Our Father, Who art in heaven, hallowed be Thy name. Thy kingdom come. Thy will be done on earth as it is in heaven. Give us this day our daily bread and forgive us our trespasses as we forgive those who trespass against us. And lead us not into temptation, but deliver us from evil. Amen.", lg: true, rIdx: -1 };
-            if (s === 2) return { b: "⚪", s: "Opening Prayers", t: "The Hail Mary", p: "Hail Mary, full of grace, the Lord is with thee. Blessed art thou among women, and blessed is the fruit of thy womb, Jesus. Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death. Amen.", lg: true, rIdx: -1 };
-            if (s === 3) return { b: "⚪", s: "Opening Prayers", t: "The Apostles' Creed", p: "I believe in God, the Father Almighty, Creator of heaven and earth; and in Jesus Christ, His only Son, our Lord, who was conceived by the Holy Spirit, born of the Virgin Mary, suffered under Pontius Pilate, was crucified, died and was buried.", lg: true, rIdx: -1 };
-            if (s === 54) return { b: "👑", s: "Conclusion", t: "The Holy God Prayer", p: "Holy God, Holy Mighty One, Holy Immortal One, have mercy on us and on the whole world. (Repeat 3 times)", lg: true, rIdx: -1 };
-            if (s === 55) return { b: "✨", s: "Conclusion", t: "Closing Prayer", p: "O Eternal God, in whom mercy is endless and the treasury of compassion inexhaustible, look kindly upon us and increase Your mercy in us. Amen.", lg: true, rIdx: -1 };
+            if (s === 0) return { b: "🔴", s: "Opening Prayers", t: "The Sign of the Cross", p: "In the name of the Father, and of the Son, and of the Holy Spirit. Amen.", lg: true };
+            if (s === 1) return { b: "⚪", s: "Opening Prayers", t: "The Our Father", p: "Our Father, Who art in heaven, hallowed be Thy name. Thy kingdom come. Thy will be done on earth as it is in heaven. Give us this day our daily bread and forgive us our trespasses as we forgive those who trespass against us. And lead us not into temptation, but deliver us from evil. Amen.", lg: true };
+            if (s === 2) return { b: "⚪", s: "Opening Prayers", t: "The Hail Mary", p: "Hail Mary, full of grace, the Lord is with thee. Blessed art thou among women, and blessed is the fruit of thy womb, Jesus. Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death. Amen.", lg: true };
+            if (s === 3) return { b: "⚪", s: "Opening Prayers", t: "The Apostles' Creed", p: creedText, lg: true };
+            if (s === 54) return { b: "👑", s: "Conclusion", t: "The Holy God Prayer", p: "Holy God, Holy Mighty One, Holy Immortal One, have mercy on us and on the whole world. (Repeat 3 times)", lg: true };
+            if (s === 55) return { b: "✨", s: "Conclusion", t: "Closing Prayer", p: "O Eternal God, in whom mercy is endless and the treasury of compassion inexhaustible, look kindly upon us and increase Your mercy in us. Amen.", lg: true };
             var adj = s - 4; var dec = Math.floor(adj / 11) + 1; var rem = adj % 11;
-            if (rem === 0) return { b: "🔴", s: "Decade " + dec, t: "The Eternal Father Prayer", p: fText, lg: true, rIdx: -1 };
-            return { b: "⚪", s: "Decade " + dec, t: "Sorrowful Passion Bead " + rem, p: pText, lg: false, rIdx: rem };
+            if (rem === 0) return { b: "🔴", s: "Decade " + dec, t: "The Eternal Father Prayer", p: fText, lg: true };
+            return { b: "⚪", s: "Decade " + dec, t: "Sorrowful Passion Bead " + rem, p: pText, lg: false };
         }
         function drawMatrix() {
             var mx = document.getElementById('matrix'); mx.innerHTML = '';
-            var cur = getData(step); var adj = step - 4; var rem = (step >= 4 && step < 54) ? (adj % 11) : -1;
+            var adj = step - 4; var rem = (step >= 4 && step < 54) ? (adj % 11) : -1;
             for (var i = 1; i <= 10; i++) {
                 var cell = document.createElement('div'); cell.className = 'bead';
                 if (rem !== 0 && i <= rem && step >= 4 && step < 54) { cell.innerHTML = '🌹'; cell.className = 'bead bloom'; }
