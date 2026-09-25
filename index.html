@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Divine Mercy Chaplet</title>
+    <style>
+        body { font-family: "Georgia", serif; background: linear-gradient(180deg, #0A0F24 0%, #111A3A 50%, #070B19 100%); color: #E3F2FD; margin: 0; padding: 0; line-height: 1.6; min-height: 100vh; overflow-x: hidden; position: relative; user-select: none; -webkit-user-select: none; }
+        .container { width: 100%; max-width: 500px; margin: 0 auto; padding: 15px; box-sizing: border-box; display: flex; flex-direction: column; min-height: 100vh; }
+        .header-panel { text-align: center; background: rgba(255, 255, 255, 0.05); border: 3px solid #4FC3F7; border-radius: 24px; padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); margin-bottom: 15px; backdrop-filter: blur(10px); }
+        .app-title { font-size: 24px; font-weight: 900; color: #FFF; margin: 0 0 5px 0; text-transform: uppercase; }
+        .progress-row { display: flex; justify-content: space-around; font-family: sans-serif; font-weight: 800; font-size: 14px; color: #4FC3F7; }
+        .prayer-card { background-color: #FFFFFF; border: 3px solid #E0E0E0; border-radius: 22px; padding: 18px; box-shadow: 0 6px 16px rgba(0,0,0,0.2); text-align: justify; margin-bottom: 15px; min-height: 140px; }
+        .prayer-title { font-size: 14px; font-weight: 800; color: #B71C1C; text-transform: uppercase; margin-bottom: 6px; text-align: center; }
+        .prayer-text { font-size: 15px; color: #212121; margin: 0; font-weight: 500; }
+        .canvas-viewport { flex-grow: 1; min-height: 230px; position: relative; margin-bottom: 15px; border-radius: 24px; overflow: hidden; background: #020617; border: 3px solid #FFD54F; }
+        .mercy-ray { position: absolute; top: 0; bottom: 0; width: 45%; opacity: 0.35; filter: blur(25px); animation: waveRays 4s infinite ease-in-out; }
+        .ray-pale { left: 5%; background: linear-gradient(90deg, transparent, #E0F7FA 50%, transparent); }
+        .ray-red { right: 5%; background: linear-gradient(90deg, transparent, #FF8A80 50%, transparent); animation-delay: 2s; }
+        @keyframes waveRays { 0%, 100% { transform: scaleX(1) skewX(-5deg); opacity: 0.25; } 50% { transform: scaleX(1.2) skewX(5deg); opacity: 0.45; } }
+        .bead-cluster { position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: center; align-items: center; gap: 14px; z-index: 10; }
+        .interactive-bead { cursor: pointer; transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; justify-content: center; align-items: center; border-radius: 50%; }
+        .bead-large { font-size: 34px; filter: drop-shadow(0 0 8px #EF5350); }
+        .bead-small { font-size: 26px; filter: drop-shadow(0 0 6px #29B6F6); }
+        .active-pulse { animation: pulseGlow 1.2s infinite ease-in-out; transform: scale(1.15); }
+        @keyframes pulseGlow { 0%, 100% { filter: drop-shadow(0 0 6px #FFFDF7); } 50% { filter: drop-shadow(0 0 16px #FFD54F); } }
+        .trust-banner { text-align: center; font-family: sans-serif; font-weight: 900; font-size: 20px; letter-spacing: 1px; text-transform: uppercase; margin: 5px 0 15px 0; color: #FF8A80; opacity: 0.4; transition: all 0.5s ease-in-out; }
+        .trust-glow { opacity: 1; color: #FFFDE7; text-shadow: 0 0 12px #FFEB3B, 0 0 24px #FF5252; transform: scale(1.03); }
+        .action-btn { width: 100%; background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%); color: #FFF; border: 3px solid #FFF; padding: 16px; border-radius: 30px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 6px 16px rgba(0,0,0,0.3); text-transform: uppercase; }
+        .reset-btn { background: none; border: none; color: #B0BEC5; font-size: 11px; font-weight: 700; cursor: pointer; padding: 6px; text-transform: uppercase; width: 100%; text-align: center; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-panel">
+            <h1 class="app-title">Divine Mercy Chaplet</h1>
+            <div class="progress-row">
+                <div id="bead-lbl">Bead Tracker: 1 / 56</div>
+                <div id="section-lbl">Opening Prayers</div>
+            </div>
+        </div>
+        <div class="prayer-card">
+            <div id="card-title-node" class="prayer-title">The Sign of the Cross</div>
+            <p id="card-text-node" class="prayer-text">In the name of the Father, and of the Son, and of the Holy Spirit. Amen.</p>
+        </div>
+        <div class="canvas-viewport">
+            <div class="mercy-ray ray-pale"></div>
+            <div class="mercy-ray ray-red"></div>
+            <div class="bead-cluster">
+                <div id="bead-display-node" class="interactive-bead bead-large active-pulse" onclick="advanceBeadStep()">🔴</div>
+            </div>
+        </div>
+        <div id="trust-node" class="trust-banner">Jesus, I trust in You!</div>
+        <button class="action-btn" id="trigger-btn" onclick="advanceBeadStep()">Tap Bead to Pray</button>
+        <button class="reset-btn" onclick="resetChapletProgress()">Reset Progress</button>
+    </div>
+    <script>
+        var currentStep = 0; const TOTAL_STEPS = 56;
+        var p1 = "Eternal Father, I offer Thee the Body and Blood, Soul and Divinity of Thy Dearly Beloved Son, Our Lord, Jesus Christ, in atonement for our sins and those of the whole world.";
+        var p2 = "For the sake of His sorrowful Passion, have mercy on us and on the whole world.";
+        function getStepData(step) {
+            if (step === 0) return { b: "🔴", s: "Opening Prayers", t: "The Sign of the Cross", p: "In the name of the Father, and of the Son, and of the Holy Spirit. Amen." };
+            if (step === 1) return { b: "⚪", s: "Opening Prayers", t: "The Our Father", p: "Our Father, Who art in heaven, hallowed be Thy name. Thy kingdom come. Thy will be done on earth as it is in heaven. Give us this day our daily bread and forgive us our trespasses as we forgive those who trespass against us. And lead us not into temptation, but deliver us from evil. Amen." };
+            if (step === 2) return { b: "⚪", s: "Opening Prayers", t: "The Hail Mary", p: "Hail Mary, full of grace, the Lord is with thee. Blessed art thou among women, and blessed is the fruit of thy womb, Jesus. Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death. Amen." };
+            if (step === 3) return { b: "⚪", s: "Opening Prayers", t: "The Apostles' Creed", p: "I believe in God, the Father Almighty, Creator of heaven and earth; and in Jesus Christ, His only Son, our Lord, who was conceived by the Holy Spirit, born of the Virgin Mary, suffered under Pontius Pilate, was crucified, died and was buried." };
+            if (step === 54) return { b: "👑", s: "Conclusion", t: "The Holy God Prayer", p: "Holy God, Holy Mighty One, Holy Immortal One, have mercy on us and on the whole world. (Repeat 3 times)" };
+            if (step === 55) return { b: "✨", s: "Conclusion", t: "Closing Prayer", p: "O Eternal God, in whom mercy is endless and the treasury of compassion inexhaustible, look kindly upon us and increase Your mercy in us. Amen." };
+            var adj = step - 4; var decade = Math.floor(adj / 11) + 1; var sub = adj % 11;
+            if (sub === 0) return { b: "🔴", s: "Decade " + decade, t: "The Eternal Father Prayer", p: p1 };
+            return { b: "⚪", s: "Decade " + decade, t: "Sorrowful Passion Bead " + sub, p: p2 };
+        }
+        function advanceBeadStep() {
+            if (currentStep < TOTAL_STEPS - 1) {
+                currentStep++; var d = getStepData(currentStep);
+                document.getElementById('bead-lbl').innerText = "Bead Tracker: " + (currentStep + 1) + " / " + TOTAL_STEPS;
+                document.getElementById('section-lbl').innerText = d.s;
+                document.getElementById('card-title-node').innerText = d.t;
+                document.getElementById('card-text-node').innerText = d.p;
+                var n = document.getElementById('bead-display-node'); n.innerText = d.b;
+                n.className = "interactive-bead " + (d.b === "🔴" || d.b === "👑" || d.b === "✨" ? "bead-large" : "bead-small") + " active-pulse";
+                var r = currentStep / (TOTAL_STEPS - 1); var t = document.getElementById('trust-node');
+                if (r > 0.1) { t.className = "trust-banner trust-glow"; t.style.filter = "brightness(" + (0.7 + (r * 0.3)) + ")"; }
+                if (currentStep === TOTAL_STEPS - 1) {
+                    var b = document.getElementById('trigger-btn'); b.disabled = true; b.innerText = "Chaplet Completed ✨"; b.style.background = "#2E7D32";
+                }
+            }
+        }
+        function resetChapletProgress() {
+            currentStep = 0; var d = getStepData(0);
+            document.getElementById('bead-lbl').innerText = "Bead Tracker: 1 / " + TOTAL_STEPS;
+            document.getElementById('section-lbl').innerText = d.s; document.getElementById('card-title-node').innerText = d.t; document.getElementById('card-text-node').innerText = d.p;
+            var n = document.getElementById('bead-display-node'); n.innerText = d.b; n.className = "interactive-bead bead-large active-pulse";
+            var t = document.getElementById('trust-node'); t.className = "trust-banner"; t.style.filter = "none";
+            var b = document.getElementById('trigger-btn'); b.disabled = false; b.innerText = "Tap Bead to Pray"; b.style.background = "linear-gradient(135deg, #1565C0 0%, #0D47A1 100%)";
+        }
+    </script>
+</body>
+</html>
